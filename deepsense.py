@@ -12,3 +12,9 @@
 import tensorflow as tf
 import numpy as np
 from tensorflow_own.AllNet import CNN, RNN, FNN
+def deepsense_model():
+    ''''''
+
+
+if __name__ == '__main__':
+    pass
