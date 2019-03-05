@@ -11,10 +11,11 @@
 '''
 import tensorflow as tf
 import numpy as np
-
-a = tf.constant(np.arange(4).reshape(1, 1, 4, 1), dtype= tf.float32)
-b = tf.nn.conv2d(input= a,
-                 filter= tf.Variable(tf.truncated_normal(shape= (1, 2, 1, 1), mean= 0, stddev= 1), dtype= tf.float32),
-                 strides= [1, 1, 3, 1],
-                 padding= 'VALID')
-print(b)
+from tensorflow_own.Routine_operation import SaveFile, LoadFile
+a = np.arange(24).reshape(4, 6)
+a[:, 2] = 0
+b = (a, 2)
+print(a)
+# SaveFile(data= b, savepickle_p= r'C:\Users\xiaosong\Desktop\test')
+data, label = LoadFile(p= r'C:\Users\xiaosong\Desktop\test')
+print(data, label)

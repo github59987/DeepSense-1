@@ -16,7 +16,6 @@
 ###################################
 import tensorflow as tf
 import numpy as np
-
 class FileoOperation:
     '''存取TFRecord文件及相关操作封装,输入属性为p_in, filename, read_in_fun, num_shards, instance_per_shard, ftype, ttype, fshape, tshape,
                  batch_size, capacity, batch_fun, batch_step, min_after_dequeue(choice)'''
@@ -48,23 +47,24 @@ class FileoOperation:
         threads = tf.train.start_queue_runners(sess=sess, coord=coord)
         return coord, threads
 
-    def __init__(self, p_in, filename, read_in_fun, num_shards, instance_per_shard, ftype, ttype, fshape, tshape,
-                 batch_size, capacity, batch_fun, batch_step, min_after_dequeue = 0):
+    def __init__(self, p_in=None, filename=None, read_in_fun=None, num_shards=None, instance_per_shard=None, ftype=None,
+                 ttype=None, fshape=None, tshape=None, batch_size=None, capacity=None, batch_fun=None, batch_step=None,
+                 min_after_dequeue = 0):
         '''
-        :param p_in: 读入文件名
-        :param filename: 转化为TFRecord文件名或格式化文件名（若存储多个文件）
-        :param read_in_fun: 处理使得p_in路径文件为python可操作文件的转换函数,返回处理好的数据
-        :param num_shards: 总共写入多少个TFRecord文件
-        :param instance_per_shard: 每个TFRecord文件中有多少个数据
-        :param ftype: 特征转换为TFRecord文件前的原始数据类型
-        :param ttype: 标签转换为TFRecord文件前的原始数据类型
-        :param fshape: 转换为TFRecord文件前的原始的单个特征形状
-        :param tshape: 转换为TFRecord文件前的原始的单个标签形状
-        :param batch_size: 处理后的样本特征向量和标签数据整理成神经网络训练时需要的batch
-        :param capacity: tf.train.shuffle_batch函数所需参数
-        :param batch_fun: 待选择的出队数据组合函数，选择在数据出队前是否需要打乱
-        :param batch_step: tf.train.shuffle_batch或tf.train.batch函数循环输出batch组合的次数(不一定要输出所有批次，用户可以自行限制最大输出批次数量)
-        :param min_after_dequeue: 出队时队列中元素的最少个数,当出队函数被调用但是队列中元素不够时，出队操作将等待更多的元素入队才会完成且
+        :param p_in: 默认为None, 读入文件名
+        :param filename: 默认为None, 转化为TFRecord文件名或格式化文件名（若存储多个文件）
+        :param read_in_fun: 默认为None, 读取数据函数,函数形式为：只有一个文件路径参数,返回处理好的数据特征和标签
+        :param num_shards: 默认为None, 总共写入多少个TFRecord文件
+        :param instance_per_shard: 默认为None, 每个TFRecord文件中有多少个数据, 总共数据量/num_shards
+        :param ftype: 默认为None, 特征转换为TFRecord文件前的原始数据类型
+        :param ttype: 默认为None, 标签转换为TFRecord文件前的原始数据类型
+        :param fshape: 默认为None, 转换为TFRecord文件前的原始的单个特征形状
+        :param tshape: 默认为None, 转换为TFRecord文件前的原始的单个标签形状
+        :param batch_size: 默认为None, 处理后的样本特征向量和标签数据整理成神经网络训练时需要的batch
+        :param capacity: 默认为None, tf.train.shuffle_batch函数所需参数
+        :param batch_fun: 默认为None, 待选择的出队数据组合函数，选择在数据出队前是否需要打乱
+        :param batch_step: 默认为None, tf.train.shuffle_batch或tf.train.batch函数循环输出batch组合的次数(不一定要输出所有批次，用户可以自行限制最大输出批次数量)
+        :param min_after_dequeue: 默认为0, 出队时队列中元素的最少个数,当出队函数被调用但是队列中元素不够时，出队操作将等待更多的元素入队才会完成且
         Minimum number elements in the queue after a dequeue, used to ensure a level of mixing of elements.
         '''
         self.__p_in = p_in
@@ -85,6 +85,7 @@ class FileoOperation:
         self.__capacity = capacity
         self.__min_after_dequeue = min_after_dequeue
         self.__batch_fun = batch_fun
+        #测试数据所需属性
         self.__batch_step = batch_step
 
     def file2TFRecord(self):
@@ -229,37 +230,37 @@ if __name__ == '__main__':
     #类中需要输入参数p_in, filename, read_in_fun, num_shards, instance_per_shard, ftype, ttype, fshape, tshape,
     #batch_size, capacity, batch_fun, batch_step, min_after_dequeue(choice)
 
-    # p_in = r'C:\Users\xiaosong\Desktop\TeamProject\all.xls'
-    # filename = r'C:\Users\xiaosong\Anaconda3\envs\ml\Scripts\ProximityDetection\output.tfrecords-%.5d-of-%.5d'
-    # num_shards = 5
-    # instance_per_shard = 80
-    # read_in_fun = Excel2Numpy
-    # ftype, ttype = tf.float64, tf.float64
-    # fshape, tshape = [4], [1]
-    # batch_size = 80
-    # capacity = 400 + 40 * batch_size
-    # batch_fun = tf.train.batch
-    # batch_step = 2
-    #
-    # fileop = FileoOperation(p_in, filename, read_in_fun, num_shards, instance_per_shard, ftype, ttype, fshape, tshape,
-    #              batch_size, capacity, batch_fun, batch_step)
-    # fileop.file2TFRecord()
-    #
-    # filename1 = r'C:\Users\xiaosong\Anaconda3\envs\ml\Scripts\ProximityDetection\output2.tfrecords-%.5d-of-%.5d'
-    # num_shards1 = 4
-    # instance_per_shard1 = 100
-    # read_in_fun1 = Excel2Numpy
-    # ftype1, ttype1 = tf.float64, tf.float64
-    # fshape1, tshape1 = [4], [1]
-    # batch_size1 = 30
-    # capacity1 = 400 + 40 * batch_size
-    # batch_fun1 = tf.train.batch
-    # batch_step = 2
-    #
-    # fileop_1 = FileoOperation(p_in, filename1, read_in_fun1, num_shards1, instance_per_shard1, ftype1, ttype1, fshape1, tshape1,
-    #              batch_size1, capacity1, batch_fun1, batch_step)
-    # fileop_1.file2TFRecord()
-    # # feature_batch, target_batch = fileop.ParseDequeue(r'C:\Users\xiaosong\Anaconda3\envs\ml\Scripts\ProximityDetection\output.tfrecords-*')
-    # # print(feature_batch)
-    # fileop.testfun(r'C:\Users\xiaosong\Anaconda3\envs\ml\Scripts\ProximityDetection\output.tfrecords-*',
-    #                r'C:\Users\xiaosong\Anaconda3\envs\ml\Scripts\ProximityDetection\output2.tfrecords-*')
+    p_in = r'C:\Users\xiaosong\Desktop\TeamProject\all.xls'
+    filename = r'C:\Users\xiaosong\Anaconda3\envs\ml\Scripts\ProximityDetection\output.tfrecords-%.5d-of-%.5d'
+    num_shards = 5
+    instance_per_shard = 80
+    read_in_fun = None
+    ftype, ttype = tf.float64, tf.float64
+    fshape, tshape = [4], [1]
+    batch_size = 80
+    capacity = 400 + 40 * batch_size
+    batch_fun = tf.train.batch
+    batch_step = 2
+
+    fileop = FileoOperation(p_in, filename, read_in_fun, num_shards, instance_per_shard, ftype, ttype, fshape, tshape,
+                 batch_size, capacity, batch_fun, batch_step)
+    fileop.file2TFRecord()
+
+    filename1 = r'C:\Users\xiaosong\Anaconda3\envs\ml\Scripts\ProximityDetection\output2.tfrecords-%.5d-of-%.5d'
+    num_shards1 = 4
+    instance_per_shard1 = 100
+    read_in_fun1 = None
+    ftype1, ttype1 = tf.float64, tf.float64
+    fshape1, tshape1 = [4], [1]
+    batch_size1 = 30
+    capacity1 = 400 + 40 * batch_size
+    batch_fun1 = tf.train.batch
+    batch_step = 2
+
+    fileop_1 = FileoOperation(p_in, filename1, read_in_fun1, num_shards1, instance_per_shard1, ftype1, ttype1, fshape1, tshape1,
+                 batch_size1, capacity1, batch_fun1, batch_step)
+    fileop_1.file2TFRecord()
+    # feature_batch, target_batch = fileop.ParseDequeue(r'C:\Users\xiaosong\Anaconda3\envs\ml\Scripts\ProximityDetection\output.tfrecords-*')
+    # print(feature_batch)
+    fileop.testfun(r'C:\Users\xiaosong\Anaconda3\envs\ml\Scripts\ProximityDetection\output.tfrecords-*',
+                   r'C:\Users\xiaosong\Anaconda3\envs\ml\Scripts\ProximityDetection\output2.tfrecords-*')
