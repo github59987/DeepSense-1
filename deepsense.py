@@ -26,6 +26,10 @@ def deepsense_model(dataset):
     CONV_KEEP_PROB = 0.8
     T = 20
     OUT_NUM = 64
+    epoch = 1000000
+    DATASET_NUM = 60
+    BATCH_SIZE = 5
+    TRAIN_STEPS = (DATASET_NUM // BATCH_SIZE) * epoch #总的数据量/batch_size及为需要分几次读入所有样本
     ds_graph = tf.Graph()
     with ds_graph.as_default():
         with tf.name_scope('dataset'):
@@ -36,7 +40,7 @@ def deepsense_model(dataset):
                 ttype= tf.float64,
                 fshape= (60, 3, 200, 10, 2),
                 tshape= (60, 6),
-                batch_size= 5,
+                batch_size= BATCH_SIZE,
                 capacity= 60+6*5,
                 batch_fun= tf.train.shuffle_batch
             )
@@ -274,15 +278,26 @@ def deepsense_model(dataset):
         sess.run(init_local)
         # 线程调配管理器
         coord, threads = FileoOperation.coord_threads(sess=sess)
-        for epoch in range(100000):
-            try:
-                while not coord.should_stop():  # 如果线程应该停止则返回True
-                    # feature_batch_, target_batch_ = sess.run([feature_batch, label_batch])
-                    # print(feature_batch_.shape, target_batch_.shape)
-                    _ = sess.run(optimizer, feed_dict={is_training: True})
-                    if epoch % 100 == 0:
-                        acc = sess.run(acc, feed_dict={is_training: False})
-                        print(acc)
+        train_steps = TRAIN_STEPS
+        try:
+            while not coord.should_stop():  # 如果线程应该停止则返回True
+                # feature_batch_, target_batch_ = sess.run([feature_batch, label_batch])
+                # print(feature_batch_.shape, target_batch_.shape)
+                _ = sess.run(optimizer, feed_dict={is_training: True})
+                train_steps -= 1
+                if train_steps <= 0:
+                    coord.request_stop()  # 请求该线程停止，若执行则使得coord.should_stop()函数返回True
+                if train_steps % (12 * 100) == 0: #读入批次总数
+                    acc = sess.run(acc, feed_dict={is_training: False})
+                    print(acc)
+        except tf.errors.OutOfRangeError:
+            print('%s次训练完成' % (TRAIN_STEPS//epoch))
+        finally:
+            # When done, ask the threads to stop. 请求该线程停止
+            coord.request_stop()
+            # And wait for them to actually do it. 等待被指定的线程终止
+            coord.join(threads)
+
 
 
 
