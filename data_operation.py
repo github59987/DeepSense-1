@@ -23,7 +23,7 @@ def data_fft(p_prior):
     CLASS_NUM = 6
     WIDTH = 10
     PER_LENGTH = 100
-    ALL_NUM = 1000
+    ALL_NUM = 10000
     F = 100
     # 矩阵初始化区域
     feature_all = np.zeros(shape=([1]), dtype=np.float64)

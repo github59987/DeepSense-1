@@ -74,7 +74,8 @@ class FileoOperation:
         self.__num_shards = num_shards
         self.__instances_per_shard = instance_per_shard
         #读入数据及标签
-        self.__features, self.__targets = self.__read_in_fun(self.__p_in)
+        self.__features, self.__targets = self.__read_in_fun(self.__p_in) if self.__read_in_fun != None else\
+            None, None
 
         #解析读取TFRecord文件数据所需属性
         self.__ftype = ftype
@@ -150,7 +151,7 @@ class FileoOperation:
         feature.set_shape(self.__fshape)
 
         # 使用train.shuffle_batch函数来组合样例This function adds the following to the current Graph
-        if self.__batch_fun == tf.train.shuffle_batch:
+        if self.__batch_fun == 'shuffle':
             feature_batch, target_batch = tf.train.shuffle_batch([feature, target], batch_size= self.__batch_size,
                                                              capacity= self.__capacity, min_after_dequeue= self.__min_after_dequeue)
         else:

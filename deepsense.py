@@ -14,6 +14,7 @@ import numpy as np
 from tensorflow_own.AllNet import CNN, RNN, FNN
 from tensorflow_own.TestEvaluation import Evaluation
 from tensorflow_own.TFrecord_operation import FileoOperation
+from tensorflow_own.Routine_operation import SaveFile, LoadFile
 # CONST
 CONV_LEN_1 = 3
 CONV_LEN_2 = 3  # 4
@@ -23,11 +24,11 @@ CONV_MEG_2 = 6
 CONV_MEG_3 = 4
 CONV_KEEP_PROB = 0.8
 WIDTH = 10
-T = 10
+T = 100
 OUT_NUM = 64
 epoch = 1000000
-DATASET_NUM = 60
-BATCH_SIZE = 5
+DATASET_NUM = 600
+BATCH_SIZE = 50
 TRAIN_STEPS = (DATASET_NUM // BATCH_SIZE) * epoch #总的数据量/batch_size及为需要分几次读入所有样本
 
 def batch_conv(CNN_object, op, is_training):
@@ -88,11 +89,11 @@ def deepsense_model():
             fileoperation = FileoOperation(
                 ftype= tf.float64,
                 ttype= tf.float64,
-                fshape= (60, 3, 200, 10, 2),
-                tshape= (60, 6),
+                fshape= (3, 200, 10, 2),
+                tshape= (6),
                 batch_size= BATCH_SIZE,
-                capacity= 60+6*5,
-                batch_fun= tf.train.shuffle_batch
+                capacity= 600+60*50,
+                batch_fun= 'shuffle'
             )
             file_train = r'F:\DeepSenseing\deepsense DataSet\output.tfrecords-*'
             feature_batch, label_batch = fileoperation.ParseDequeue(files= file_train)
