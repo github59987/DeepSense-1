@@ -12,10 +12,25 @@
 import tensorflow as tf
 import numpy as np
 from tensorflow_own.Routine_operation import SaveFile, LoadFile
-a = np.arange(24).reshape(4, 6)
-a[:, 2] = 0
-b = (a, 2)
-print(a)
-# SaveFile(data= b, savepickle_p= r'C:\Users\xiaosong\Desktop\test')
-data, label = LoadFile(p= r'C:\Users\xiaosong\Desktop\test')
-print(data, label)
+
+
+
+
+
+
+
+
+if __name__ == '__main__':
+    # a = tf.constant(np.arange(20).reshape(2, 2, 5), dtype=tf.float32)
+    # b = tf.constant(np.array([[[1]]]), dtype= tf.float32)
+    # c = tf.concat([a, b], axis=1)
+    # with tf.Session() as sess:
+    #     a_ = sess.run(a)
+    #     b_ = sess.run(b)
+    #     c_ = sess.run(c)
+    #     print(c_.shape)
+    a = np.arange(20).reshape(4, 5)
+    b = np.array([1])
+    # c = np.concatenate((a, b), axis=0)
+    print(a.shape, b.shape)
+    print(a + b)
