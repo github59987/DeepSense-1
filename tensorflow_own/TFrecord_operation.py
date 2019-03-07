@@ -74,8 +74,10 @@ class FileoOperation:
         self.__num_shards = num_shards
         self.__instances_per_shard = instance_per_shard
         #读入数据及标签
-        self.__features, self.__targets = self.__read_in_fun(self.__p_in) if self.__read_in_fun != None else\
-            None, None
+        if self.__read_in_fun != None:
+            self.__features, self.__targets = self.__read_in_fun(self.__p_in)
+        else:
+            self.__features, self.__targets = None, None
 
         #解析读取TFRecord文件数据所需属性
         self.__ftype = ftype
@@ -145,10 +147,12 @@ class FileoOperation:
         # tf.decode_raw可以将字符串解析成feature_raw所对应的数组，此处一定要按照features字典中键值对的顺序来解析否则报错
         target = tf.decode_raw(features['target_raw'], self.__ttype)
         feature = tf.decode_raw(features['feature_raw'], self.__ftype)
-
         # pre-defined shape
         target.set_shape(self.__tshape)
-        feature.set_shape(self.__fshape)
+        # feature.set_shape(self.__fshape)
+        feature = tf.reshape(feature, self.__fshape)
+        # target = tf.reshape(target, self.__tshape)
+
 
         # 使用train.shuffle_batch函数来组合样例This function adds the following to the current Graph
         if self.__batch_fun == 'shuffle':

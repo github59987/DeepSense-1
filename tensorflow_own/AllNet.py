@@ -101,15 +101,17 @@ class CNN(NeuralNetwork):
         self.__stride_conv = stride_conv
         self.__stride_pool = stride_pool
 
-    def convolution(self, input='x', padding= 'SAME'):
+    def convolution(self, input='x', padding= 'SAME', strides= 'region'):
         '''
         单层卷积操作
         :param input: setdefult:x, 输入待进行卷积操作节点
         :param padding: 'SAME'/'VALID'
+        :param strides: default 'region', 卷积步伐, 如果需要各个维不同步伐需要输入iterable
         :return: ops, 单层卷积操作后节点
         '''
         input = input if input != 'x' else self.x
-        return tf.nn.conv2d(input= input, filter= self.__w_conv, strides= [1, self.__stride_conv, self.__stride_conv, 1], padding= padding)
+        strides = self.__stride_conv if strides == 'region' else strides
+        return tf.nn.conv2d(input= input, filter= self.__w_conv, strides= strides, padding= padding)
 
     def depthwise_convolution(self, input= 'x', padding= 'SAME'):
         '''
@@ -216,19 +218,23 @@ class RNN(NeuralNetwork):
         outputs, fin_state = tf.nn.dynamic_rnn(cell, x_in, dtype= tf.float32)
         return outputs, fin_state
 
-    def dynamic_multirnn(self, style, layers_num, output_keep_prob):
+    def dynamic_multirnn(self, style, layers_num, output_keep_prob, is_reshape='no'):
         '''
         按时间步展开计算多层循环网络
         :param style: LSTM/GRU
         :param layers_num: RNN层数
         :param output_keep_prob: rnn节点中dropout概率
+        :param is_reshape: 默认为'no', 指示是否需要转换输入张量维度, 若需要可写'yes'
         :return: 各个时间步输出值和最终时间点输出值
         '''
         #建立多层rnn节点对象
         cells = tf.nn.rnn_cell.MultiRNNCell([tf.nn.rnn_cell.DropoutWrapper(
             cell=RNN.get_a_cell(num_units=self.__num_units, style= style), input_keep_prob=1.0,
             output_keep_prob= output_keep_prob) for _ in range(layers_num)])
-        x_in = RNN.reshape(x= self.x, max_time= self.__max_time)
+        if is_reshape == 'yes':
+            x_in = RNN.reshape(x= self.x, max_time= self.__max_time)
+        else:
+            x_in = self.x
         outputs, fin_state = tf.nn.dynamic_rnn(cells, x_in, dtype= tf.float32)
         return outputs, fin_state
 

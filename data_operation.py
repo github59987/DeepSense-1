@@ -26,11 +26,11 @@ def data_fft(p_prior):
     ALL_NUM = 10000
     F = 100
     # 矩阵初始化区域
-    feature_all = np.zeros(shape=([1]), dtype=np.float64)
-    label_all = np.zeros(shape=([1]), dtype=np.float64)
-    dataset_fin = np.zeros(shape=[1], dtype=np.float64)
-    sub_dataset_2_fft_all = np.zeros(shape=([1]), dtype=np.float64)
-    dataset_per_mode = np.zeros(shape=[1], dtype=np.float64)
+    feature_all = np.zeros(shape=([1]), dtype=np.float32)
+    label_all = np.zeros(shape=([1]), dtype=np.float32)
+    dataset_fin = np.zeros(shape=[1], dtype=np.float32)
+    sub_dataset_2_fft_all = np.zeros(shape=([1]), dtype=np.float32)
+    dataset_per_mode = np.zeros(shape=[1], dtype=np.float32)
     label = np.zeros(shape=(ALL_NUM // PER_LENGTH, CLASS_NUM), dtype=np.float64)
     # 导入数据
     for i in range(CLASS_NUM):
@@ -78,6 +78,7 @@ def data_fft(p_prior):
             # 最终所有交通模式数据特征和标签
             feature_all = dataset_fin if i == 0 else \
                 np.concatenate((feature_all, dataset_fin), axis=0)
+            # feature_all.dtype = np.float32
             label_all = label if i == 0 else np.vstack((label_all, label))
             print('总特征维度为:', feature_all.shape)
             print('总标签维度为:', label_all.shape)
@@ -104,10 +105,10 @@ def save_TFRecord(p_prior):
 if __name__ == '__main__':
     p_prior = r'F:\\'
     # 检验存储数据成pickle文件的数据
-    data_fft(p_prior= p_prior)
-    data, label = LoadFile(p= p_prior+r'DeepSenseing\deepsense DataSet\train.pickle')
-    print(data.shape, label.shape)
-    print(data.dtype, label.dtype)
+    # data_fft(p_prior= p_prior)
+    #     # data, label = LoadFile(p= p_prior+r'DeepSenseing\deepsense DataSet\train.pickle')
+    #     # print(data.shape, label.shape)
+    #     # print(data.dtype, label.dtype)
     save_TFRecord(p_prior= p_prior)
 
 
