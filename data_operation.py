@@ -80,6 +80,10 @@ def data_fft(p_prior):
                 np.concatenate((feature_all, dataset_fin), axis=0)
             # feature_all.dtype = np.float32
             label_all = label if i == 0 else np.vstack((label_all, label))
+            #对数据特征和标签进行shuffle
+            rng = np.random.RandomState(0)
+            rng.shuffle(feature_all)
+            rng.shuffle(label_all)
             print('总特征维度为:', feature_all.shape)
             print('总标签维度为:', label_all.shape)
 
@@ -105,10 +109,10 @@ def save_TFRecord(p_prior):
 if __name__ == '__main__':
     p_prior = r'F:\\'
     # 检验存储数据成pickle文件的数据
-    # data_fft(p_prior= p_prior)
-    #     # data, label = LoadFile(p= p_prior+r'DeepSenseing\deepsense DataSet\train.pickle')
-    #     # print(data.shape, label.shape)
-    #     # print(data.dtype, label.dtype)
+    data_fft(p_prior= p_prior)
+    data, label = LoadFile(p= p_prior+r'DeepSenseing\deepsense DataSet\train.pickle')
+    print(data.shape, label.shape)
+    print(data.dtype, label.dtype)
     save_TFRecord(p_prior= p_prior)
 
 

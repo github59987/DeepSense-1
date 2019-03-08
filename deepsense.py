@@ -231,7 +231,7 @@ def deepsense_model():
             #转置为T在中间
             conv_output = tf.transpose(a= conv_output, perm=[0, 2, 1])
             # print(conv_output.get_shape().as_list())
-
+        with tf.name_scope('rnn'):
             # multiGRU部分
             gru = RNN(x=conv_output, max_time=T, num_units=128)
             rnn_outputs, _ = gru.dynamic_multirnn(style='GRU', layers_num=2, output_keep_prob=0.8)  # rnn_outputs:(batch_size, T, num_units)
@@ -272,8 +272,6 @@ def deepsense_model():
         # Starts all queue runners collected in the graph.
         threads = tf.train.start_queue_runners(sess=sess, coord=coord)
         train_steps = TRAIN_STEPS
-        #记录训练轮数
-        i = 1
         try:
             while not coord.should_stop():  # 如果线程应该停止则返回True
                 # feature_batch_, target_batch_ = sess.run([feature_batch, label_batch])
@@ -283,11 +281,11 @@ def deepsense_model():
                 train_steps -= 1
                 if train_steps <= 0:
                     coord.request_stop()  # 请求该线程停止，若执行则使得coord.should_stop()函数返回True
-                if train_steps % (12 * 100) == 0: #读入批次总数
+                if (TRAIN_STEPS - train_steps) % (12 * 100) == 0: #读入批次总数
                     acc_ = sess.run(acc, feed_dict={is_training: False})
                     print(acc_)
-                summary_visalization.add_summary(summary_writer=summary_writer, summary=summary, summary_information=i)
-                i += 1
+                summary_visalization.add_summary(summary_writer=summary_writer, summary=summary,
+                                                 summary_information=(TRAIN_STEPS - train_steps + 1))
         except tf.errors.OutOfRangeError:
             print('%s次训练完成' % (TRAIN_STEPS//12))
         finally:
