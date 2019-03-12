@@ -252,7 +252,7 @@ def deepsense_model():
             loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=fin_output, labels=label_batch))
             # 添加摘要loss
             summary_visalization.scalar_summaries(arg={'loss': loss})
-            optimizer = tf.train.GradientDescentOptimizer(learning_rate=1e-4).minimize(loss)
+            optimizer = tf.train.GradientDescentOptimizer(learning_rate=1e-2).minimize(loss)
             evaluation = Evaluation(one_hot=True, logit=tf.nn.softmax(fin_output), label=label_batch, regression_pred=None,
                                     regression_label=None)
             acc = evaluation.acc_classification()
@@ -260,7 +260,7 @@ def deepsense_model():
             merge = summary_visalization.summary_merge()
             init_global = tf.global_variables_initializer()
             init_local = tf.local_variables_initializer()
-            gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.333)
+            gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.6)
 
     with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options), graph=ds_graph) as sess:
         sess.run(init_global)
