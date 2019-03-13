@@ -51,7 +51,7 @@ def data_fft(p_prior):
                 per_width_allsense = np.abs(np.fft.fft(a=time_sheet, n=2*F, axis=1)) #(9, 2*F)
                 #flat二维矩阵并组合所有flat后的数据
                 dataset_fin = np.vstack((dataset_fin, np.reshape(a=per_width_allsense, newshape=(1, -1)))) if \
-                    dataset_fin.any() else np.reshape(a=per_width_allsense, newshape=(1, -1)) #(:, 9*2*F)
+                    dataset_fin.any() else np.reshape(a=per_width_allsense, newshape=(1, -1)) #(:, 9*2*F),最终总维度为:(ALL_NUM//WIDTH, 9*2*F)
             for per_data in np.split(ary=dataset_fin, indices_or_sections=ALL_NUM//WIDTH//T, axis=0): #T是单个训练样本包含多少个WIDTH数量
                 #flat(T, 9*2*F)维数据并在axis=0维进行拼接
                 per_data_flat = np.reshape(a=per_data, newshape=(1, -1)) #(1, 9*2*F*T)

@@ -21,6 +21,5 @@ from tensorflow_own.TFrecord_operation import FileoOperation
 
 
 if __name__ == '__main__':
-    a = np.arange(20).reshape(4, 5)
-    for i in np.split(ary=a, indices_or_sections=4, axis=0):
-        print(i)
+    a = tf.constant(np.arange(20).reshape(4, 5), dtype=tf.float32)
+    print(np.array(a.get_shape().as_list()) + 3)
