@@ -201,7 +201,7 @@ def deepsense_model():
             #对卷积层的输出在后三个维度上进行flat并组合WIDTH参数在各个特征向量的最后
             axis_cnn = cnn_fin.get_shape().as_list()
             cnn_flat = tf.reshape(tensor=cnn_fin, shape=(-1, axis_cnn[1]*axis_cnn[2]*axis_cnn[3])) #(batch_size*T, :)
-            const_WIDTH = tf.constant(value=np.ones(shape=(cnn_flat.get_shape().as_list()[0], 1)*WIDTH), dtype= tf.float32)
+            const_WIDTH = tf.constant(value=np.ones(shape=(cnn_flat.get_shape().as_list()[0], 1))*WIDTH, dtype= tf.float32)
             cnn_WIDTH = tf.concat([cnn_flat, const_WIDTH], axis=1)
             print('组合WIDTH后的维度为: %s' % cnn_WIDTH.shape)
         with tf.name_scope('rnn'):
@@ -209,7 +209,7 @@ def deepsense_model():
             axis_cnn_WIDTH = cnn_WIDTH.get_shape().as_list()
             cnn_WIDTH_flat = tf.reshape(tensor=cnn_WIDTH, shape=(1, axis_cnn_WIDTH[0]*axis_cnn_WIDTH[1]))
             cnn_output = tf.reshape(tensor=cnn_WIDTH_flat, shape=(-1, T*axis_cnn_WIDTH[1])) #(batch_size, T*:)
-            cnn_output = tf.reshape(tensor=cnn_output, shape=(-1, axis_cnn_WIDTH, T)) #(batch_size, :, T)
+            cnn_output = tf.reshape(tensor=cnn_output, shape=(-1, axis_cnn_WIDTH[1], T)) #(batch_size, :, T)
             rnn_input = tf.transpose(a=cnn_output, perm=[0, 2, 1]) #(batch_size, T, :)
             # multiGRU部分
             gru = RNN(x=rnn_input, max_time=T, num_units=128)
