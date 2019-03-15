@@ -21,5 +21,20 @@ from tensorflow_own.TFrecord_operation import FileoOperation
 
 
 if __name__ == '__main__':
-    a = tf.constant(np.arange(20).reshape(4, 5), dtype=tf.float32)
-    print(np.array(a.get_shape().as_list()) + 3)
+    # def fun(a):
+    #     if a:
+    #         return 1
+    #     else:
+    #         return 2
+    #
+    a = tf.placeholder(dtype=tf.bool)
+    def fun(num):
+        return tf.constant(num, dtype= tf.float32)
+    def fun2(a):
+        b = tf.cond(a, lambda:fun(1), lambda:fun(2))
+        return b
+    # numm = fun(a)
+    with tf.Session() as sess:
+        num = sess.run(fun2(a), feed_dict={a: True})
+        print(num)
+

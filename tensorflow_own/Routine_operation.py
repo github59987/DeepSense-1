@@ -16,6 +16,16 @@ import pickle
 import pandas as pd
 from matplotlib import pyplot as plt
 from tensorflow.python.framework import graph_util
+def Databatch(dataset, batch_size):
+    '''
+    批数据生成器
+    :param dataset: 训练集数据（带标签）
+    :param batch_size: 批次大小
+    :return: type= (feature, label), 批数据
+    '''
+    data_size = dataset[0].shape[0]
+    for i in range(0, data_size-batch_size+1, batch_size):
+        yield dataset[0][i:i+batch_size, :], dataset[-1][i:i+batch_size, :]
 
 def LoadFile(p):
     '''

@@ -23,7 +23,7 @@ def data_fft(p_prior):
     CLASS_NUM = 6
     WIDTH = 10
     PER_LENGTH = 100
-    ALL_NUM = 10000
+    ALL_NUM = 1000000
     F = 100
     # 矩阵初始化区域
     feature_all = np.zeros(shape=([1]), dtype=np.float32)
@@ -101,7 +101,7 @@ def save_TFRecord(p_prior):
         p_in= p_prior + r'DeepSenseing\deepsense DataSet\train.pickle',
         filename= p_prior + r'DeepSenseing\deepsense DataSet\output.tfrecords-%.5d-of-%.5d',
         num_shards= 5,
-        instance_per_shard= 10*6//5,
+        instance_per_shard= 10000*6//5,
         read_in_fun= LoadFile
     )
     fileoperation.file2TFRecord()

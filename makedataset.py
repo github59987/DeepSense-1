@@ -22,7 +22,7 @@ def data_fft(p_prior):
     CLASS_NUM = 6
     WIDTH = 10
     T = 10
-    ALL_NUM = 10000
+    ALL_NUM = 200000#70000
     F = 100
     # 矩阵初始化区域
     label_all = np.zeros(shape=([1]), dtype=np.float32)
@@ -67,7 +67,8 @@ def data_fft(p_prior):
     print('总特征维度为:', dataset_all.shape)
     print('总标签维度为:', label_all.shape)
     p_train = p_prior + r'DeepSenseing\deepsense DataSet\train.pickle'
-    SaveFile(data=(dataset_all, label_all), savepickle_p=p_train)
+    p_test = p_prior + r'DeepSenseing\deepsense DataSet\test.pickle'
+    SaveFile(data=(dataset_all, label_all), savepickle_p=p_test) #存储训练或测试数据
 
 def save_TFRecord(p_prior):
     '''
@@ -80,7 +81,7 @@ def save_TFRecord(p_prior):
         p_in= p_prior + r'DeepSenseing\deepsense DataSet\train.pickle',
         filename= p_prior + r'DeepSenseing\deepsense DataSet\output.tfrecords-%.5d-of-%.5d',
         num_shards= 5,
-        instance_per_shard= 100*6//5,
+        instance_per_shard= 2000*6//5,
         read_in_fun= LoadFile
     )
     fileoperation.file2TFRecord()
@@ -88,8 +89,8 @@ def save_TFRecord(p_prior):
 if __name__ == '__main__':
     p_prior = r'F:\\'
     # 检验存储数据成pickle文件的数据
-    data_fft(p_prior= p_prior)
-    data, label = LoadFile(p= p_prior+r'DeepSenseing\deepsense DataSet\train.pickle')
+    # data_fft(p_prior= p_prior)
+    data, label = LoadFile(p= p_prior+r'DeepSenseing\deepsense DataSet\test.pickle')
     print(data.shape, label.shape)
     print(data.dtype, label.dtype)
-    save_TFRecord(p_prior= p_prior)
+    # save_TFRecord(p_prior= p_prior)
