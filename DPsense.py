@@ -307,47 +307,7 @@ def model_training(training_time):
     print(PRF_dict)
 
 
-    #     # 线程调配管理器
-    #     coord = tf.train.Coordinator()
-    #     # Starts all queue runners collected in the graph.
-    #     threads = tf.train.start_queue_runners(sess=sess, coord=coord)
-    #     train_steps = TRAIN_STEPS
-    #     acc_ALL, n = 0, 1 #测试集准确率
-    #     try:
-    #         while not coord.should_stop():  # 如果线程应该停止则返回True
-    #             # feature_batch_, target_batch_ = sess.run([feature_batch, label_batch])
-    #             # print(feature_batch_.shape, target_batch_.shape)
-    #             summary = sess.run(merge, feed_dict={is_training: True,
-    #                                                  feature_batch: np.arange(18000*50).reshape(50, 18000),
-    #                                                  label_batch: np.arange(6*50).reshape(50, 6)})
-    #             _ = sess.run(optimizer, feed_dict={is_training: True,
-    #                                                feature_batch:np.arange(18000*50).reshape(50, 18000),
-    #                                                label_batch:np.arange(6*50).reshape(50, 6)})
-    #             train_steps -= 1
-    #             if train_steps <= 0:
-    #                 coord.request_stop()  # 请求该线程停止，若执行则使得coord.should_stop()函数返回True
-    #             if (TRAIN_STEPS - train_steps) % (TRAIN_STEPS//BATCH_SIZE * 50) == 0:  # 读入批次总数
-    #                 for batch_test_feature, batch_test_label in Databatch((test_feature, test_label), 50):
-    #                     acc_ = sess.run(acc, feed_dict={is_training:False,
-    #                                                     test_feature:batch_test_feature, test_label:batch_test_label})
-    #                     acc_ALL =  ((n-1)*acc_ALL + acc_) / n
-    #                 print(acc_ALL)
-    #                 # 保存checkpoint节点
-    #                 saverestore_model.save_checkpoint(saver=saver, epoch=TRAIN_STEPS//BATCH_SIZE,
-    #                                                   is_recording_max_acc=False)
-    #             summary_visalization.add_summary(summary_writer=summary_writer, summary=summary,
-    #                                              summary_information=(TRAIN_STEPS - train_steps + 1))
-    #     except tf.errors.OutOfRangeError:
-    #         print('%s次训练完成' % (TRAIN_STEPS // 12))
-    #     finally:
-    #         # When done, ask the threads to stop. 请求该线程停止
-    #         coord.request_stop()
-    #         # And wait for them to actually do it. 等待被指定的线程终止
-    #         coord.join(threads)
-    #         summary_visalization.summary_close(summary_writer=summary_writer)
-    # #计算最终的分类度量
-    # PRF_dict = evaluation.PRF_tables(mode_num=6)
-    # print(PRF_dict)
+
 
 if __name__ == '__main__':
     model_training(training_time=0)
