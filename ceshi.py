@@ -21,20 +21,6 @@ from tensorflow_own.TFrecord_operation import FileoOperation
 
 
 if __name__ == '__main__':
-    # def fun(a):
-    #     if a:
-    #         return 1
-    #     else:
-    #         return 2
-    #
-    a = tf.placeholder(dtype=tf.bool)
-    def fun(num):
-        return tf.constant(num, dtype= tf.float32)
-    def fun2(a):
-        b = tf.cond(a, lambda:fun(1), lambda:fun(2))
-        return b
-    # numm = fun(a)
-    with tf.Session() as sess:
-        num = sess.run(fun2(a), feed_dict={a: True})
-        print(num)
+    for i in range(0, 10, 2):
+        print(i)
 
