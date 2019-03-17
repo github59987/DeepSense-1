@@ -20,12 +20,13 @@ def data_fft(p_prior):
     # scalar
     CLASS_NUM = 6
     WIDTH = 100
-    ALL_NUM = 2000000
+    ALL_NUM = 400000 #训练集设置400000，测试集设置200000
     F = 100
     rng = np.random.RandomState(0)
     # 导入数据
     dataset_fin = np.zeros(shape=([1]), dtype=np.float32)
     label_fin = np.zeros(shape=([1]), dtype=np.float32)
+    dataset_fft_flat = np.zeros(shape=([1]), dtype=np.float32)
     for i in range(CLASS_NUM):
         print('正在导入第%s个模式数据' % (i + 1))
         p = p_prior + r'DeepSenseing\ICT-DataSet\Label_%s.txt' % (i + 1)
@@ -35,16 +36,18 @@ def data_fft(p_prior):
             dataset = np.loadtxt(file, delimiter=',', skiprows=0)[:ALL_NUM, :]
             # 删除中间3列线性加速度
             dataset = np.delete(dataset, [3, 4, 5, 9, 10, 11, 12, 13], axis=1)
+            dataset_transpose = dataset.T #(6, ALL_NUM)
+            # print(dataset_transpose.shape)
             #对各列做傅里叶变换取模
             for i in range(0, ALL_NUM-WIDTH, WIDTH):
-                dataset_fft = np.abs(np.fft.fft(a=dataset[i:i+WIDTH, :], n=2*F, axis=0))
-                dataset_fft_flat = dataset_fft.reshape(1, -1)
+                dataset_fft = np.abs(np.fft.fft(a=dataset[:, i:i+WIDTH], n=2*F, axis=1))
+                dataset_fft_flat = dataset_fft.reshape(1, -1)#(1, 6*2*F)
                 dataset_per = np.vstack((dataset_per, dataset_fft)) if dataset_per.any() else dataset_fft
             label_per[:, i] = 1
             label_fin = np.vstack((label_fin, label_per)) if label_fin.any() else label_per
             dataset_fin = np.vstack((dataset_fin, dataset_fft_flat)) if dataset_fin.any() else dataset_fft_flat
-    rng.shuffle(dataset_fin)
-    rng.shuffle(label_fin)
+    rng.shuffle(dataset_fin) #(6*ALL_NUM//WIDTH, 6*2*F)
+    rng.shuffle(label_fin) #(6*ALL_NUM//WIDTH, 1)
     print('总特征维度为:', dataset_fin.shape)
     print('总标签维度为:', label_fin.shape)
     p_train = p_prior + r'DeepSenseing\deepsense-DataSet\train.pickle'
@@ -52,7 +55,7 @@ def data_fft(p_prior):
     SaveFile(data=(dataset_fin, label_fin), savepickle_p=p_train)  # 存储训练或测试数据
 
 if __name__ == '__main__':
-    p_prior = r'D:\\'
+    p_prior = r'F:\\'
     # 检验存储数据成pickle文件的数据
     data_fft(p_prior= p_prior)
     data, label = LoadFile(p= p_prior+r'DeepSenseing\deepsense-DataSet\train.pickle')
