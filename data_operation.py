@@ -25,7 +25,7 @@ def data_fft(p_prior):
     PER_LENGTH = 100
     ALL_NUM = 1000000
     F = 100
-    # 矩阵初始化区域
+    # 矩阵初始化
     feature_all = np.zeros(shape=([1]), dtype=np.float32)
     label_all = np.zeros(shape=([1]), dtype=np.float32)
     dataset_fin = np.zeros(shape=[1], dtype=np.float32)
